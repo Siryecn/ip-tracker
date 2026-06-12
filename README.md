@@ -69,7 +69,7 @@
 | 社工库验证 — 验证他人提供的 IP 是否与声称位置一致 | ✅ |
 | 渗透测试授权 — 在授权范围内测试目标 IP 暴露情况 | ✅ |
 
-> 请合法使用本工具，遵守当地法律法规。详见 [法律声明](#-法律声明)。
+> 请合法使用本工具，遵守当地法律法规。
 
 ---
 
@@ -301,7 +301,7 @@ IP追踪工具/
 | 穿透 | [Cpolar](https://www.cpolar.com/) | 免费内网穿透，自动 SSL |
 | 自动化 | [Playwright](https://playwright.dev/) | 浏览器自动化（自动登录 Cpolar） |
 | 配置 | [python-dotenv](https://pypi.org/project/python-dotenv/) | 动态加载敏感信息 |
-| Token 生成 | Python `secrets` | 加密级随机数，杜绝暴力破解 |
+| Token 生成 | Python-secrets | 加密级随机数，杜绝暴力破解 |
 
 ---
 
