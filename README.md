@@ -100,7 +100,7 @@ copy .env.example .env
 # 编辑 .env，填入你的 Cpolar 账号密码即可
 # DOMAIN 无需填写，会自动更新！
 
-# 4. 启动(等待几秒)
+# 4. 启动(双击bat后等待几秒)
 run_iptanzhen.bat
 ```
 
