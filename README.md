@@ -85,7 +85,7 @@
 
 ```powershell
 # 1. 克隆项目
-git clone https://github.com/your-username/ip-tracker.git
+git clone https://github.com/Siryecn/ip-tracker.git
 cd ip-tracker
 
 # 2. 安装依赖
