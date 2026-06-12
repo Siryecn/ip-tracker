@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://www.python.org/downloads/"><img src="https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python&logoColor=white" alt="Python"></a>
   <a href="https://flask.palletsprojects.com/"><img src="https://img.shields.io/badge/Flask-3.x-green?style=for-the-badge&logo=flask&logoColor=white" alt="Flask"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/your-username/ip-tracker?style=for-the-badge" alt="License"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/Siryecn/ip-tracker?style=for-the-badge" alt="License"></a>
 </p>
 
 <p align="center">
