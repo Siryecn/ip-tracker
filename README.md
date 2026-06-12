@@ -77,9 +77,9 @@
 
 ### 前置准备
 
-- [ ] 安装 [Python 3.8+](https://www.python.org/downloads/)
-- [ ] 安装 [Cpolar](https://www.cpolar.com/)（免费账户即可）
-- [ ] 在 Cpolar 中创建隧道，指向 `127.0.0.1:5000`
+- [x] 安装 [Python 3.8+](https://www.python.org/downloads/)
+- [x] 安装 [Cpolar](https://www.cpolar.com/)（免费账户即可）
+- [x] 在 Cpolar 中创建隧道，指向 `127.0.0.1:5000`
 
 ### 一键部署
 
