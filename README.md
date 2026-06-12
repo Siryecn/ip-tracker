@@ -411,7 +411,7 @@ IP追踪工具/
 
 <p align="center">
   <a href="https://github.com/your-username/ip-tracker/stargazers">
-    <img src="https://img.shields.io/github/stars/your-username/ip-tracker?style=social" alt="Stars">
+    <img src="https://img.shields.io/github/stars/Siryecn/ip-tracker?style=social" alt="Stars">
   </a>
 </p>
 
