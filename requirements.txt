@@ -1,0 +1,4 @@
+flask
+waitress
+python-dotenv
+playwright

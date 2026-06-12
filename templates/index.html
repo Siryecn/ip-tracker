@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IP追踪工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <style>
+        /* 核心样式：全面美化，新增渐变、精致卡片、统一配色 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            /* 背景图配置：自适应铺满 */
+            background: url("/static/background.jpg") no-repeat center center fixed;
+            background-size: cover;
+            /* 优化1：添加will-change，提升背景渲染流畅度，不改动样式 */
+            will-change: background-position;
+        }
+
+        /* 作者署名：顶部导航栏 —— 仅修改颜色为深灰蓝#0066CC，其他不变 */
+        .author-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 12px 20px;
+            background-color: rgba(255, 255, 255, 0.65);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 999;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            will-change: transform;
+        }
+
+        .author-name {
+            /* 仅修改：颜色改为深灰蓝#0066CC，其他字体样式保持不变 */
+            font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+            color: #0066CC; /* 深灰蓝，高级沉稳，和蓝色按钮呼应 */
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .author-desc {
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        .container {
+            width: 95%;
+            max-width: 800px;
+            max-height: calc(100vh - 70px);
+            margin-top: 60px;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+            overflow-y: auto;
+            scrollbar-width: none;
+            transform: translateZ(0);
+            will-change: scroll-position;
+        }
+
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 卡片样式 —— 保持原有不变 */
+        .input-area, .link-area, .query-area {
+            padding: 25px;
+            background-color: #ffffff;
+            border-radius: 16px;
+            margin: 20px 0;
+            border: 1px solid rgba(240, 242, 245, 0.9);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            transition: box-shadow 0.3s ease;
+            will-change: box-shadow, transform;
+        }
+
+        .input-area:hover, .link-area:hover, .query-area:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        /* 按钮美化：保持原有渐变不变，新增移动端高亮圆角适配（唯一修改点） */
+        .btn {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+            will-change: background, box-shadow, transform;
+            /* ===== 新增3行：解决移动端高亮矩形，让高亮和按钮形状一致 ===== */
+            -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
+            -webkit-border-radius: 12px;
+            tap-highlight-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
+            will-change: left;
+        }
+
+        .btn:hover::after {
+            left: 100%;
+        }
+
+        .btn:hover {
+            background: linear-gradient(135deg, #0066cc 0%, #0044aa 100%);
+            box-shadow: 0 4px 15px rgba(0, 102, 204, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 102, 204, 0.2);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+            box-shadow: 0 4px 15px rgba(75, 85, 99, 0.2);
+        }
+
+        /* 禁用按钮样式：保持原有不变 */
+        .btn:disabled {
+            background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .btn:disabled::after {
+            display: none;
+        }
+
+        .token-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        /* 输入框美化：保持原有不变 */
+        .input-box {
+            padding: 14px 18px;
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+            flex: 1;
+            will-change: border, box-shadow, transform;
+        }
+
+        .input-box:focus {
+            outline: none;
+            border-color: #0088ff;
+            box-shadow: 0 0 0 4px rgba(0, 136, 255, 0.1);
+            background-color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .url-input {
+            padding: 14px 18px;
+            width: 100%;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            background-color: #f9fafb;
+            will-change: border, box-shadow, transform;
+        }
+
+        .url-input:focus {
+            outline: none;
+            border-color: #0088ff;
+            box-shadow: 0 0 0 4px rgba(0, 136, 255, 0.1);
+            background-color: #ffffff;
+            transform: translateY(-1px);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 提示框美化：保持原有不变 */
+        .tip {
+            margin-top: 15px;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: rgba(249, 250, 251, 0.8);
+        }
+
+        /* 专属提示样式：保持原有不变 */
+        .generate-tip {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: rgba(249, 250, 251, 0.8);
+        }
+
+        .success-tip {
+            color: #0088ff;
+            font-weight: 600;
+            background-color: rgba(0, 136, 255, 0.05);
+            border: 1px solid rgba(0, 136, 255, 0.1);
+        }
+
+        .error-tip {
+            color: #E64340;
+            font-weight: 600;
+            background-color: rgba(230, 67, 64, 0.05);
+            border: 1px solid rgba(230, 67, 64, 0.1);
+        }
+
+        .destroy-tip {
+            color: #ff7f0e;
+            font-weight: 600;
+            background-color: rgba(255, 127, 14, 0.05);
+            border: 1px solid rgba(255, 127, 14, 0.1);
+        }
+
+        .hint-tip {
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            line-height: 1.8;
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            background-color: #f9fafb;
+            border: 1px solid #f3f4f6;
+        }
+
+        /* 记录详情卡片美化：保持原有不变 */
+        .record-detail {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            background-color: #ffffff;
+            font-size: 14px;
+            line-height: 2.0;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            width: 100%;
+        }
+
+        /* 标题样式优化：仅修改颜色为深灰蓝#1E293B，其他不变 */
+        h2 {
+            font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+            color: #1E293B;
+            font-size: clamp(22px, 5vw, 26px);
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: 700;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #0088ff, #0066cc);
+            border-radius: 2px;
+        }
+
+        h3 {
+            color: #1f2937;
+            font-size: clamp(16px, 4vw, 18px);
+            margin-bottom: 20px;
+            border-left: 4px solid #0088ff;
+            padding-left: 12px;
+            font-weight: 600;
+        }
+
+        p {
+            color: #6b7280;
+            font-size: clamp(13px, 3vw, 14px);
+            margin-bottom: 25px;
+            text-align: center;
+            line-height: 1.8;
+            font-weight: 500;
+        }
+
+        #trackLink {
+            width: 100%;
+            padding: 14px 18px;
+            margin: 15px 0;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            background-color: #f9fafb;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            will-change: border, box-shadow;
+        }
+
+        #trackLink:focus {
+            outline: none;
+            border-color: #0088ff;
+            box-shadow: 0 0 0 4px rgba(0, 136, 255, 0.1);
+            background-color: #ffffff;
+        }
+
+        /* 底部作者版权信息 —— 仅修改颜色为深灰蓝#0066CC，其他不变 */
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f3f4f6;
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .footer-author {
+            font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+            color: #0066CC;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        /* 加载动效样式：保持原有不变 */
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffffff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+            will-change: transform;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 移动端适配：保持原有不变 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+                width: 98%;
+                max-height: calc(100vh - 60px);
+                margin-top: 50px;
+                border-radius: 16px;
+            }
+
+            .input-area, .link-area, .query-area {
+                padding: 20px;
+                margin: 15px 0;
+            }
+
+            .token-input-group {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+
+            .btn {
+                width: 100%;
+                padding: 14px 28px;
+            }
+
+            .btn-group {
+                gap: 10px;
+            }
+
+            .input-box, .url-input {
+                background-color: #ffffff;
+            }
+
+            .record-detail {
+                padding: 18px;
+                font-size: 13px;
+            }
+
+            .hint-tip {
+                font-size: 11px;
+                padding: 10px 12px;
+            }
+
+            .generate-tip {
+                font-size: 13px;
+                padding: 10px 12px;
+            }
+
+            .author-header {
+                padding: 10px 15px;
+            }
+
+            .author-name {
+                font-size: 14px;
+                letter-spacing: 0.5px;
+                color: #0066CC;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                max-width: 600px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部作者署名栏（保持文字不变，仅颜色修改） -->
+    <div class="author-header">
+        <div class="author-name">衍楚 · IP追踪工具</div>
+        <div class="author-desc">合法使用 · 切勿滥用</div>
+    </div>
+
+    <div class="container">
+        <h2>IP追踪工具（专属Token+自定义跳转链接）</h2>
+        <p>⚠️ 仅用于合法场景，禁止恶意追踪他人隐私！</p>
+        <p>📌 核心规则：专属Token+自定义跳转链接→生成专属链接→查询到IP后，Token自动销毁→未使用Token1小时后自动过期→重复且未使用的Token禁止生成</p>
+
+        <!-- 步骤1：输入Token -->
+        <div class="input-area">
+            <h3>步骤1：输入Token（自己牢记，用于生成/查询）</h3>
+            <div class="token-input-group">
+                <input type="text" class="input-box" id="customToken" placeholder="支持字母/数字/下划线/短横线" onblur="validateTokenOnBlur()" />
+                <button class="btn btn-secondary" onclick="copyToken()">复制Token</button>
+            </div>
+            <div class="hint-tip">💡 这是你的专属Token，需牢记用于后续查询IP记录 | 要求：①长度≥8位 ②包含至少1个大写字母+1个小写字母 ③无连续3个相同/有序字符 | <strong>Token越复杂（越乱），生成的链接效果越逼真，不易被察觉</strong> | 推荐点击「自动生成」获取乱序Token | <strong>Token未使用1小时后自动销毁 | 重复且未使用的Token禁止生成，需更换</strong></div>
+            
+            <!-- 专属提示容器：存放复制Token、自动生成Token的提示（按钮上方） -->
+            <div class="generate-tip" id="generateTokenTip"></div>
+            
+            <div class="btn-group" style="margin-bottom: 15px;">
+                <button class="btn btn-secondary" onclick="generateRandomToken()" id="generateBtn">自动生成乱序Token</button>
+                <button class="btn btn-secondary" onclick="clearInput()">清空输入</button>
+            </div>
+            <input type="text" class="url-input" id="customRedirectUrl" placeholder="请输入跳转目标链接（http/https开头）" />
+            <div class="hint-tip">💡 提示：可直接粘贴拼多多助力活动等完整链接（必须包含http://或https://）</div>
+            <div class="btn-group">
+                <button class="btn" onclick="generateTrackLink()" id="createLinkBtn">生成专属追踪链接</button>
+            </div>
+            <div class="tip" id="tokenTip"></div>
+        </div>
+
+        <!-- 步骤2：专属追踪链接展示 -->
+        <div class="link-area hidden" id="linkArea">
+            <h3>步骤2：你的专属追踪链接（一键复制后分享）</h3>
+            <input type="text" id="trackLink" readonly />
+            <div class="btn-group">
+                <button class="btn" onclick="copyTrackLink()">一键复制链接</button>
+            </div>
+            <div class="tip" id="copyTip"></div>
+        </div>
+
+        <!-- 步骤3：查询IP记录 -->
+        <div class="query-area">
+            <h3>步骤3：输入Token查询对应IP（查询成功即销毁Token）</h3>
+            <input type="text" class="input-box" id="queryToken" placeholder="输入你专属的Token" />
+            <div class="btn-group">
+                <button class="btn" onclick="queryIpRecord()" id="queryBtn">验证并查询</button>
+            </div>
+            <div class="tip" id="queryTip"></div>
+
+            <div id="recordArea" class="hidden">
+                <div class="record-detail">
+                    <strong>对应Token：</strong><span id="recordToken">--</span><br>
+                    <strong>访问IP地址：</strong><span id="recordIp">--</span><br>
+                    <strong>首次访问时间：</strong><span id="recordTime">--</span><br>
+                    <strong>跳转目标链接：</strong><span id="recordRedirectUrl">--</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部作者版权信息（保持文字不变，仅颜色修改） -->
+        <div class="footer">
+            版权所有 @ <span class="footer-author">衍楚</span> | 仅用于合法技术研究与学习
+        </div>
+    </div>
+
+    <!-- 背景音乐标签（隐藏，自动播放） -->
+    <audio id="bgm" preload="auto" loop autoplay>
+        <source src="/static/bgm.mp3" type="audio/mpeg">
+        您的浏览器不支持音频播放，请升级浏览器！
+    </audio>
+
+    <script>
+        // ===== 前端核心配置常量（已修改：更换新域名，修改链接路径前缀为/s/）=====
+        const DOMAIN = "https://31401893.r32.cpolar.top"; // 新域名
+        const LINK_PATH_PREFIX = "/s/"; // 链接路径前缀
+        const TOKEN_LENGTH = 16;
+        const BASE_URL = DOMAIN + LINK_PATH_PREFIX; // 新链接前缀：https://31401893.r32.cpolar.top/s/
+
+        // ===== 缓存DOM元素（已包含generateTokenTip）=====
+        const domElements = {
+            customToken: document.getElementById("customToken"),
+            tokenTip: document.getElementById("tokenTip"),
+            generateTokenTip: document.getElementById("generateTokenTip"),
+            linkArea: document.getElementById("linkArea"),
+            trackLink: document.getElementById("trackLink"),
+            copyTip: document.getElementById("copyTip"),
+            queryToken: document.getElementById("queryToken"),
+            queryTip: document.getElementById("queryTip"),
+            recordArea: document.getElementById("recordArea"),
+            recordToken: document.getElementById("recordToken"),
+            recordIp: document.getElementById("recordIp"),
+            recordTime: document.getElementById("recordTime"),
+            recordRedirectUrl: document.getElementById("recordRedirectUrl"),
+            bgm: document.getElementById("bgm"),
+            generateBtn: document.getElementById("generateBtn"),
+            createLinkBtn: document.getElementById("createLinkBtn"),
+            queryBtn: document.getElementById("queryBtn")
+        };
+
+        // ===== 防抖函数（优化流畅性：调整延迟为1200ms，更贴合用户操作）=====
+        function debounce(fn, delay = 1200) {
+            let timer = null;
+            return function() {
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    fn.apply(this, arguments);
+                    timer = null;
+                }, delay);
+            };
+        }
+
+        // ===== 独立的Token验证函数（优化：提前终止循环，减少无用计算）=====
+        function validateToken(token) {
+            if (!token) {
+                return { valid: false, message: "❌ 请输入Token后再生成！" };
+            }
+            if (token.length < 8) {
+                return { valid: false, message: "❌ Token长度不足8位！请输入8位及以上字符。" };
+            }
+            const basicReg = /^(?=.*[a-z])(?=.*[A-Z])[a-zA-Z0-9_\-]{8,}$/;
+            if (!basicReg.test(token)) {
+                return { valid: false, message: "❌ Token格式错误！要求：①长度≥8位 ②包含至少1个大写字母+1个小写字母 ③仅支持字母/数字/下划线/短横线" };
+            }
+            if (hasConsecutiveDuplicates(token)) {
+                return { valid: false, message: "❌ Token包含连续3个及以上相同字符！请修改（越乱越逼真）" };
+            }
+            if (hasConsecutiveOrdered(token)) {
+                return { valid: false, message: "❌ Token包含连续3个及以上有序字符（如ABC、123）！请修改（越乱越逼真）" };
+            }
+            return { valid: true, message: "✅ Token格式验证通过！" };
+        }
+
+        // ===== 输入框失焦实时校验（优化：减少冗余定时器，提升流畅度）=====
+        function validateTokenOnBlur() {
+            const token = domElements.customToken.value.trim();
+            if (!token) return;
+            const result = validateToken(token);
+            const tipClass = result.valid ? "tip success-tip" : "tip error-tip";
+            if (domElements.tokenTip.className !== tipClass) {
+                domElements.tokenTip.className = tipClass;
+            }
+            domElements.tokenTip.innerText = result.message;
+            if (result.valid) {
+                setTimeout(() => {
+                    if (domElements.tokenTip.innerText === result.message) {
+                        domElements.tokenTip.innerText = "";
+                    }
+                }, 3000);
+            }
+        }
+
+        // 辅助函数：校验连续重复字符（优化：提前终止，减少计算量）
+        function hasConsecutiveDuplicates(str) {
+            for (let i = 0; i < str.length - 2; i++) {
+                if (str[i] === str[i+1] && str[i+1] === str[i+2]) {
+                    return true;
+                }
+                if (str[i] !== str[i+1]) {
+                    continue;
+                }
+            }
+            return false;
+        }
+
+        // 辅助函数：校验连续有序字符（优化：提前终止，减少计算量）
+        function hasConsecutiveOrdered(str) {
+            const charCodes = str.split("").map(c => c.charCodeAt(0));
+            for (let i = 0; i < charCodes.length - 2; i++) {
+                const c1 = charCodes[i], c2 = charCodes[i+1], c3 = charCodes[i+2];
+                const isAscending = (c2 - c1 === 1) && (c3 - c2 === 1);
+                const isDescending = (c1 - c2 === 1) && (c2 - c3 === 1);
+                if (isAscending || isDescending) {
+                    return true;
+                }
+                if (Math.abs(c2 - c1) > 1) {
+                    continue;
+                }
+            }
+            return false;
+        }
+
+        // ===== 复制Token（优化：减少DOM操作，提升流畅度）=====
+        function copyToken() {
+            const token = domElements.customToken.value.trim();
+            if (!domElements.generateTokenTip.innerText) {
+                domElements.generateTokenTip.className = "generate-tip";
+            }
+            if (!token) {
+                domElements.generateTokenTip.className = "generate-tip error-tip";
+                domElements.generateTokenTip.innerText = "❌ Token为空，无法复制！";
+                setTimeout(() => {
+                    domElements.generateTokenTip.innerText = "";
+                    domElements.generateTokenTip.className = "generate-tip";
+                }, 3000);
+                return;
+            }
+            try {
+                navigator.clipboard.writeText(token);
+                domElements.generateTokenTip.className = "generate-tip success-tip";
+                domElements.generateTokenTip.innerText = "✅ Token已复制到剪贴板！";
+                setTimeout(() => {
+                    domElements.generateTokenTip.innerText = "";
+                    domElements.generateTokenTip.className = "generate-tip";
+                }, 3000);
+            } catch (e) {
+                try {
+                    domElements.customToken.select();
+                    domElements.customToken.setSelectionRange(0, 99999);
+                    document.execCommand("copy");
+                    domElements.generateTokenTip.className = "generate-tip success-tip";
+                    domElements.generateTokenTip.innerText = "✅ Token已复制到剪贴板！";
+                    setTimeout(() => {
+                        domElements.generateTokenTip.innerText = "";
+                        domElements.generateTokenTip.className = "generate-tip";
+                    }, 3000);
+                } catch (err) {
+                    domElements.generateTokenTip.className = "generate-tip error-tip";
+                    domElements.generateTokenTip.innerText = "❌ 复制失败，请手动选中复制！";
+                }
+            }
+        }
+
+        // ===== 清空输入（优化：减少DOM操作，提升流畅度）=====
+        function clearInput() {
+            domElements.customToken.value = "";
+            domElements.customRedirectUrl.value = "";
+            domElements.queryToken.value = "";
+            domElements.tokenTip.innerText = "";
+            domElements.generateTokenTip.innerText = "";
+            if (domElements.generateTokenTip.className !== "generate-tip") {
+                domElements.generateTokenTip.className = "generate-tip";
+            }
+            if (domElements.tokenTip.className !== "tip") {
+                domElements.tokenTip.className = "tip";
+            }
+            domElements.linkArea.classList.add("hidden");
+            domElements.recordArea.classList.add("hidden");
+        }
+
+        // ===== 自动生成Token（优化：减少DOM操作，提升请求流畅度）=====
+        async function generateRandomToken() {
+            domElements.generateBtn.disabled = true;
+            domElements.generateBtn.innerHTML = '<span class="loading"></span>正在生成Token...';
+            domElements.generateTokenTip.innerText = "";
+            domElements.generateTokenTip.className = "generate-tip";
+            try {
+                const response = await Promise.race([
+                    fetch("/generate-unique-token", {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    }),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("请求超时")), 5000))
+                ]);
+                const data = await response.json();
+                if (data.success) {
+                    domElements.customToken.value = data.token;
+                    domElements.generateTokenTip.className = "generate-tip success-tip";
+                    domElements.generateTokenTip.innerText = "✅ Token生成成功！";
+                } else {
+                    domElements.generateTokenTip.className = "generate-tip error-tip";
+                    domElements.generateTokenTip.innerText = `❌ Token生成失败：${data.message}`;
+                }
+            } catch (err) {
+                domElements.generateTokenTip.className = "generate-tip error-tip";
+                domElements.generateTokenTip.innerText = err.message === "请求超时" ? "❌ 请求超时，生成Token失败！" : "❌ 网络异常，生成Token失败！";
+            } finally {
+                setTimeout(() => {
+                    domElements.generateBtn.disabled = false;
+                    domElements.generateBtn.innerHTML = "自动生成乱序Token";
+                    if (domElements.generateTokenTip.className === "generate-tip success-tip") {
+                        setTimeout(() => {
+                            domElements.generateTokenTip.innerText = "";
+                            domElements.generateTokenTip.className = "generate-tip";
+                        }, 3000);
+                    }
+                }, 500);
+            }
+        }
+
+        // ===== 生成专属追踪链接（核心优化：点击即转圈，无延迟，无冗余）=====
+        async function generateTrackLinkCore() {
+            const token = domElements.customToken.value.trim();
+            const redirectUrl = document.getElementById("customRedirectUrl").value.trim();
+            domElements.tokenTip.innerText = "";
+            domElements.linkArea.classList.add("hidden");
+            const tokenValidateResult = validateToken(token);
+            if (!tokenValidateResult.valid) {
+                domElements.tokenTip.className = "tip error-tip";
+                domElements.tokenTip.innerText = tokenValidateResult.message;
+                return false;
+            }
+            if (!redirectUrl) {
+                domElements.tokenTip.className = "tip error-tip";
+                domElements.tokenTip.innerText = "❌ 请输入跳转目标链接（如拼多多助力链接）！";
+                return false;
+            }
+            const urlReg = /^https?:\/\/.+/;
+            if (!urlReg.test(redirectUrl)) {
+                domElements.tokenTip.className = "tip error-tip";
+                domElements.tokenTip.innerText = "❌ 跳转链接格式错误！必须以http://或https://开头";
+                return false;
+            }
+            const encodedToken = encodeURIComponent(token);
+            const trackLink = `${BASE_URL}${encodedToken}`;
+            try {
+                const response = await fetch(`/register-token?token=${encodedToken}&redirectUrl=${encodeURIComponent(redirectUrl)}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                const data = await response.json();
+                if (!data.success) {
+                    domElements.tokenTip.className = "tip error-tip";
+                    domElements.tokenTip.innerText = `❌ ${data.message}`;
+                    return false;
+                }
+                domElements.trackLink.value = trackLink;
+                domElements.linkArea.classList.remove("hidden");
+                domElements.tokenTip.className = "tip success-tip";
+                domElements.tokenTip.innerText = "✅ Token和跳转链接有效，专属链接生成成功！（未使用1小时后自动销毁）";
+                return true;
+            } catch (err) {
+                domElements.tokenTip.className = "tip error-tip";
+                domElements.tokenTip.innerText = "❌ 网络异常，Token注册失败！";
+                return false;
+            }
+        }
+
+        // 封装防抖后的核心业务（延迟500ms，兼顾防重复和体验）
+        const debouncedGenerateCore = debounce(generateTrackLinkCore, 500);
+
+        // 点击事件处理函数（点击即触发动效，无延迟）
+        async function generateTrackLink() {
+            domElements.createLinkBtn.disabled = true;
+            domElements.createLinkBtn.innerHTML = '<span class="loading"></span>正在生成链接...';
+            try {
+                await debouncedGenerateCore();
+            } finally {
+                setTimeout(() => {
+                    domElements.createLinkBtn.disabled = false;
+                    domElements.createLinkBtn.innerHTML = "生成专属追踪链接";
+                }, 500);
+            }
+        }
+
+        // ===== 复制追踪链接（优化：减少DOM操作，提升流畅度）=====
+        function copyTrackLink() {
+            const input = domElements.trackLink;
+            domElements.copyTip.innerText = "";
+            try {
+                navigator.clipboard.writeText(input.value);
+                domElements.copyTip.className = "tip success-tip";
+                domElements.copyTip.innerText = "✅ 链接复制成功！可直接粘贴分享";
+                setTimeout(() => {
+                    domElements.copyTip.innerText = "";
+                    domElements.copyTip.className = "tip";
+                }, 3000);
+            } catch (e) {
+                try {
+                    input.select();
+                    input.setSelectionRange(0, 99999);
+                    document.execCommand("copy");
+                    domElements.copyTip.className = "tip success-tip";
+                    domElements.copyTip.innerText = "✅ 链接复制成功！可直接粘贴分享";
+                    setTimeout(() => {
+                        domElements.copyTip.innerText = "";
+                        domElements.copyTip.className = "tip";
+                    }, 3000);
+                } catch (err) {
+                    domElements.copyTip.className = "tip error-tip";
+                    domElements.copyTip.innerText = "❌ 复制失败，请手动选中复制！";
+                }
+            }
+        }
+
+        // ===== 查询IP记录（核心优化：点击即转圈，无延迟，无冗余）=====
+        async function queryIpRecordCore() {
+            const token = domElements.queryToken.value.trim();
+            domElements.queryTip.innerText = "";
+            domElements.recordArea.classList.add("hidden");
+            domElements.recordToken.innerText = "--";
+            domElements.recordIp.innerText = "--";
+            domElements.recordTime.innerText = "--";
+            domElements.recordRedirectUrl.innerText = "--";
+            if (!token) {
+                domElements.queryTip.className = "tip error-tip";
+                domElements.queryTip.innerText = "❌ 请输入你专属的Token！";
+                return;
+            }
+            try {
+                const encodedToken = encodeURIComponent(token);
+                const res = await Promise.race([
+                    fetch(`/query-record?token=${encodedToken}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        }
+                    }),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error("请求超时")), 5000))
+                ]);
+                const data = await res.json();
+                if (!data.success) {
+                    domElements.queryTip.className = "tip error-tip";
+                    domElements.queryTip.innerText = `❌ ${data.message}`;
+                    return;
+                }
+                if (!data.record.ip) {
+                    domElements.queryTip.className = "tip success-tip";
+                    domElements.queryTip.innerText = "✅ Token有效，尚未被访问，暂无IP记录！（链接有效，1小时内未使用将自动销毁）";
+                    return;
+                }
+                domElements.queryTip.className = "tip destroy-tip";
+                domElements.queryTip.innerText = "⚠️ 查询成功！该Token已自动销毁，专属链接同步失效！";
+                domElements.recordArea.classList.remove("hidden");
+                domElements.recordToken.innerText = data.record.token;
+                domElements.recordIp.innerText = data.record.ip;
+                domElements.recordTime.innerText = data.record.time;
+                domElements.recordRedirectUrl.innerText = data.record.redirect_url;
+            } catch (e) {
+                domElements.queryTip.className = "tip error-tip";
+                domElements.queryTip.innerText = e.message === "请求超时" ? "❌ 请求超时，查询失败！" : "❌ 网络异常，查询失败！";
+            }
+        }
+
+        // 封装防抖后的核心业务（延迟500ms，兼顾防重复和体验）
+        const debouncedQueryCore = debounce(queryIpRecordCore, 500);
+
+        // 点击事件处理函数（点击即触发动效，无延迟）
+        async function queryIpRecord() {
+            domElements.queryBtn.disabled = true;
+            domElements.queryBtn.innerHTML = '<span class="loading"></span>正在查询...';
+            try {
+                await debouncedQueryCore();
+            } finally {
+                setTimeout(() => {
+                    domElements.queryBtn.disabled = false;
+                    domElements.queryBtn.innerHTML = "验证并查询";
+                }, 500);
+            }
+        }
+
+        // ===== 自动播放音乐配置（优化：减少阻塞，提升音频加载流畅度）=====
+        document.addEventListener('DOMContentLoaded', function() {
+            if (domElements.bgm) {
+                domElements.bgm.volume = 0.4;
+                setTimeout(() => {
+                    domElements.bgm.play().catch(err => {
+                        console.log('自动播放优化：部分浏览器限制自动播放，需用户点击页面后即可正常播放', err);
+                    });
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
