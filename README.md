@@ -83,7 +83,7 @@
 
 ### 一键部署
 
-powershell
+```powershell
 # 1. 克隆项目
 git clone https://github.com/Siryecn/ip-tracker.git
 cd ip-tracker
@@ -101,6 +101,7 @@ copy .env.example .env
 
 # 4. 启动
 run_iptanzhen.bat
+```
 
 就这么简单，服务已在公网运行！
 
