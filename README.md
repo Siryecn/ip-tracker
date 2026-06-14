@@ -272,7 +272,7 @@ Cpolar 隧道 (cpolar.top)
 ## 项目结构
 
 ```
-IP追踪工具/
+ip-tracker/
 ├── static/
 │   ├── background.jpg     # 页面背景图
 │   └── bgm.mp3            # 背景音乐
