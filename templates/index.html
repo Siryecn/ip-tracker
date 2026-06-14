@@ -27,7 +27,7 @@
             will-change: background-position;
         }
 
-        /* 作者署名：顶部导航栏 —— 仅修改颜色为深灰蓝#0066CC，其他不变 */
+        /* 署名：顶部导航栏 */
         .author-header {
             position: fixed;
             top: 0;
@@ -44,7 +44,7 @@
         }
 
         .author-name {
-            /* 仅修改：颜色改为深灰蓝#0066CC，其他字体样式保持不变 */
+            /* 修改：颜色改为深灰蓝#0066CC */
             font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
             color: #0066CC; /* 深灰蓝，高级沉稳，和蓝色按钮呼应 */
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
@@ -77,7 +77,7 @@
             display: none;
         }
 
-        /* 卡片样式 —— 保持原有不变 */
+        /* 卡片样式 */
         .input-area, .link-area, .query-area {
             padding: 25px;
             background-color: #ffffff;
@@ -101,7 +101,7 @@
             flex-wrap: wrap;
         }
 
-        /* 按钮美化：保持原有渐变不变，新增移动端高亮圆角适配（唯一修改点） */
+        /* 按钮美化：新增移动端高亮圆角适配 */
         .btn {
             padding: 12px 28px;
             background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
@@ -116,7 +116,7 @@
             position: relative;
             overflow: hidden;
             will-change: background, box-shadow, transform;
-            /* ===== 新增3行：解决移动端高亮矩形，让高亮和按钮形状一致 ===== */
+            /* 解决移动端高亮矩形，让高亮和按钮形状一致 */
             -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
             -webkit-border-radius: 12px;
             tap-highlight-color: rgba(255, 255, 255, 0.2);
@@ -158,7 +158,7 @@
             box-shadow: 0 4px 15px rgba(75, 85, 99, 0.2);
         }
 
-        /* 禁用按钮样式：保持原有不变 */
+        /* 禁用按钮样式 */
         .btn:disabled {
             background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
             cursor: not-allowed;
@@ -178,7 +178,7 @@
             width: 100%;
         }
 
-        /* 输入框美化：保持原有不变 */
+        /* 输入框美化 */
         .input-box {
             padding: 14px 18px;
             width: 100%;
@@ -223,7 +223,7 @@
             display: none;
         }
 
-        /* 提示框美化：保持原有不变 */
+        /* 提示框美化 */
         .tip {
             margin-top: 15px;
             font-size: 14px;
@@ -232,7 +232,7 @@
             background-color: rgba(249, 250, 251, 0.8);
         }
 
-        /* 专属提示样式：保持原有不变 */
+        /* 专属提示样式 */
         .generate-tip {
             margin-top: 10px;
             margin-bottom: 15px;
@@ -276,7 +276,7 @@
             border: 1px solid #f3f4f6;
         }
 
-        /* 记录详情卡片美化：保持原有不变 */
+        /* 记录详情卡片美化 */
         .record-detail {
             margin-top: 20px;
             padding: 20px;
@@ -289,7 +289,7 @@
             width: 100%;
         }
 
-        /* 标题样式优化：仅修改颜色为深灰蓝#1E293B，其他不变 */
+        /* 标题样式优化 */
         h2 {
             font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
             color: #1E293B;
@@ -369,7 +369,7 @@
             letter-spacing: 0.5px;
         }
 
-        /* 加载动效样式：保持原有不变 */
+        /* 加载动效样式 */
         .loading {
             display: inline-block;
             width: 16px;
@@ -387,7 +387,7 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 移动端适配：保持原有不变 */
+        /* 移动端适配 */
         @media (max-width: 768px) {
             .container {
                 padding: 20px 15px;
@@ -459,7 +459,7 @@
     </style>
 </head>
 <body>
-    <!-- 顶部作者署名栏（保持文字不变，仅颜色修改） -->
+    <!-- 署名栏（颜色修改） -->
     <div class="author-header">
         <div class="author-name">衍楚 · IP追踪工具</div>
         <div class="author-desc">合法使用 · 切勿滥用</div>
@@ -523,7 +523,7 @@
             </div>
         </div>
 
-        <!-- 底部作者版权信息（保持文字不变，仅颜色修改） -->
+        <!-- 底部版权信息（颜色修改） -->
         <div class="footer">
             版权所有 @ <span class="footer-author">衍楚</span> | 仅用于合法技术研究与学习
         </div>
@@ -575,7 +575,7 @@
             };
         }
 
-        // ===== 独立的Token验证函数（优化：提前终止循环，减少无用计算）=====
+        // ===== 独立的Token验证函数（提前终止循环，减少无用计算）=====
         function validateToken(token) {
             if (!token) {
                 return { valid: false, message: "❌ 请输入Token后再生成！" };
@@ -596,7 +596,7 @@
             return { valid: true, message: "✅ Token格式验证通过！" };
         }
 
-        // ===== 输入框失焦实时校验（优化：减少冗余定时器，提升流畅度）=====
+        // ===== 输入框失焦实时校验（减少冗余定时器，提升流畅度）=====
         function validateTokenOnBlur() {
             const token = domElements.customToken.value.trim();
             if (!token) return;
@@ -615,7 +615,7 @@
             }
         }
 
-        // 辅助函数：校验连续重复字符（优化：提前终止，减少计算量）
+        // 辅助函数：校验连续重复字符（提前终止，减少计算量）
         function hasConsecutiveDuplicates(str) {
             for (let i = 0; i < str.length - 2; i++) {
                 if (str[i] === str[i+1] && str[i+1] === str[i+2]) {
@@ -628,7 +628,7 @@
             return false;
         }
 
-        // 辅助函数：校验连续有序字符（优化：提前终止，减少计算量）
+        // 辅助函数：校验连续有序字符（提前终止，减少计算量）
         function hasConsecutiveOrdered(str) {
             const charCodes = str.split("").map(c => c.charCodeAt(0));
             for (let i = 0; i < charCodes.length - 2; i++) {
@@ -645,7 +645,7 @@
             return false;
         }
 
-        // ===== 复制Token（优化：减少DOM操作，提升流畅度）=====
+        // ===== 复制Token（减少DOM操作，提升流畅度）=====
         function copyToken() {
             const token = domElements.customToken.value.trim();
             if (!domElements.generateTokenTip.innerText) {
@@ -686,7 +686,7 @@
             }
         }
 
-        // ===== 清空输入（优化：减少DOM操作，提升流畅度）=====
+        // ===== 清空输入（减少DOM操作，提升流畅度）=====
         function clearInput() {
             domElements.customToken.value = "";
             domElements.customRedirectUrl.value = "";
@@ -703,7 +703,7 @@
             domElements.recordArea.classList.add("hidden");
         }
 
-        // ===== 自动生成Token（优化：减少DOM操作，提升请求流畅度）=====
+        // ===== 自动生成Token（减少DOM操作，提升请求流畅度）=====
         async function generateRandomToken() {
             domElements.generateBtn.disabled = true;
             domElements.generateBtn.innerHTML = '<span class="loading"></span>正在生成Token...';
@@ -746,7 +746,7 @@
             }
         }
 
-        // ===== 生成专属追踪链接（核心优化：点击即转圈，无延迟，无冗余）=====
+        // ===== 生成专属追踪链接（点击即转圈，无延迟，无冗余）=====
         async function generateTrackLinkCore() {
             const token = domElements.customToken.value.trim();
             const redirectUrl = document.getElementById("customRedirectUrl").value.trim();
@@ -814,7 +814,7 @@
             }
         }
 
-        // ===== 复制追踪链接（优化：减少DOM操作，提升流畅度）=====
+        // ===== 复制追踪链接（减少DOM操作，提升流畅度）=====
         function copyTrackLink() {
             const input = domElements.trackLink;
             domElements.copyTip.innerText = "";
@@ -844,7 +844,7 @@
             }
         }
 
-        // ===== 查询IP记录（核心优化：点击即转圈，无延迟，无冗余）=====
+        // ===== 查询IP记录（点击即转圈，无延迟，无冗余）=====
         async function queryIpRecordCore() {
             const token = domElements.queryToken.value.trim();
             domElements.queryTip.innerText = "";
@@ -911,7 +911,7 @@
             }
         }
 
-        // ===== 自动播放音乐配置（优化：减少阻塞，提升音频加载流畅度）=====
+        // ===== 自动播放音乐配置（减少阻塞，提升音频加载流畅度）=====
         document.addEventListener('DOMContentLoaded', function() {
             if (domElements.bgm) {
                 domElements.bgm.volume = 0.4;
