@@ -91,7 +91,7 @@ cd ip-tracker
 # 2. 安装依赖
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-# 若使用CMD，替换为：.\venv\Scripts\activate.bat
+# 若使用CMD，替换为：.venv\Scripts\activate.bat
 pip install -r requirements.txt
 playwright install chromium
 
