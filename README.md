@@ -94,6 +94,7 @@ python -m venv venv
 # 若使用CMD，替换为：.venv\Scripts\activate.bat
 pip install -r requirements.txt
 playwright install chromium
+# 无科学上网下载chromium时稍慢，请耐心等待
 
 # 3. 配置 Cpolar 账号密码
 copy .env.example .env
