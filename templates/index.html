@@ -23,7 +23,7 @@
             /* 背景图配置：自适应铺满 */
             background: url("/static/background.jpg") no-repeat center center fixed;
             background-size: cover;
-            /* 优化1：添加will-change，提升背景渲染流畅度，不改动样式 */
+            /* 添加will-change，提升背景渲染流畅度，不改动样式 */
             will-change: background-position;
         }
 
@@ -44,7 +44,7 @@
         }
 
         .author-name {
-            /* 修改：颜色改为深灰蓝#0066CC */
+            /* 颜色改为深灰蓝#0066CC */
             font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
             color: #0066CC; /* 深灰蓝，高级沉稳，和蓝色按钮呼应 */
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
@@ -101,7 +101,7 @@
             flex-wrap: wrap;
         }
 
-        /* 按钮美化：新增移动端高亮圆角适配 */
+        /* 按钮美化：移动端高亮圆角适配 */
         .btn {
             padding: 12px 28px;
             background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
@@ -351,7 +351,7 @@
             background-color: #ffffff;
         }
 
-        /* 底部作者版权信息 —— 仅修改颜色为深灰蓝#0066CC，其他不变 */
+        /* 底部作者版权信息修改颜色为深灰蓝#0066CC */
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -459,7 +459,7 @@
     </style>
 </head>
 <body>
-    <!-- 署名栏（颜色修改） -->
+    <!-- 署名栏 -->
     <div class="author-header">
         <div class="author-name">衍楚 · IP追踪工具</div>
         <div class="author-desc">合法使用 · 切勿滥用</div>
@@ -536,7 +536,7 @@
     </audio>
 
     <script>
-        // ===== 前端核心配置常量（已修改：更换新域名，修改链接路径前缀为/s/）=====
+        // ===== 前端核心配置常量（更换新域名，修改链接路径前缀为/s/）=====
         const DOMAIN = "https://31401893.r32.cpolar.top"; // 新域名
         const LINK_PATH_PREFIX = "/s/"; // 链接路径前缀
         const TOKEN_LENGTH = 16;
