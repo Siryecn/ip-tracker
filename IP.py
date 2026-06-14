@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 ENV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
 load_dotenv(ENV_PATH)
 
-# ===== 核心配置常量（已修改：更换新域名，移除无用的TARGET_PATH）=====
+# ===== 核心配置常量（更换新域名，移除无用的TARGET_PATH）=====
 DOMAIN = os.getenv("DOMAIN", "https://localhost:5000")  # 从 .env 读取，默认本地
 TOKEN_LENGTH = 16
 # 移除原TARGET_PATH，新增链接路径前缀（对应/s/）
