@@ -4,7 +4,6 @@
     <title>IP追踪工具</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <style>
-        /* 核心样式：全面美化，新增渐变、精致卡片、统一配色 */
         * {
             margin: 0;
             padding: 0;
@@ -20,14 +19,11 @@
             justify-content: center;
             align-items: center;
             font-family: "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
-            /* 背景图配置：自适应铺满 */
             background: url("/static/background.jpg") no-repeat center center fixed;
             background-size: cover;
-            /* 添加will-change，提升背景渲染流畅度，不改动样式 */
             will-change: background-position;
         }
 
-        /* 署名：顶部导航栏 */
         .author-header {
             position: fixed;
             top: 0;
@@ -44,9 +40,8 @@
         }
 
         .author-name {
-            /* 颜色改为深灰蓝#0066CC */
             font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
-            color: #0066CC; /* 深灰蓝，高级沉稳，和蓝色按钮呼应 */
+            color: #0066CC;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
             font-size: 16px;
             font-weight: 700;
@@ -77,7 +72,6 @@
             display: none;
         }
 
-        /* 卡片样式 */
         .input-area, .link-area, .query-area {
             padding: 25px;
             background-color: #ffffff;
@@ -101,7 +95,6 @@
             flex-wrap: wrap;
         }
 
-        /* 按钮美化：移动端高亮圆角适配 */
         .btn {
             padding: 12px 28px;
             background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
@@ -116,7 +109,6 @@
             position: relative;
             overflow: hidden;
             will-change: background, box-shadow, transform;
-            /* 解决移动端高亮矩形，让高亮和按钮形状一致 */
             -webkit-tap-highlight-color: rgba(255, 255, 255, 0.2);
             -webkit-border-radius: 12px;
             tap-highlight-color: rgba(255, 255, 255, 0.2);
@@ -158,7 +150,6 @@
             box-shadow: 0 4px 15px rgba(75, 85, 99, 0.2);
         }
 
-        /* 禁用按钮样式 */
         .btn:disabled {
             background: linear-gradient(135deg, #d1d5db 0%, #9ca3af 100%);
             cursor: not-allowed;
@@ -178,7 +169,6 @@
             width: 100%;
         }
 
-        /* 输入框美化 */
         .input-box {
             padding: 14px 18px;
             width: 100%;
@@ -223,7 +213,6 @@
             display: none;
         }
 
-        /* 提示框美化 */
         .tip {
             margin-top: 15px;
             font-size: 14px;
@@ -232,7 +221,6 @@
             background-color: rgba(249, 250, 251, 0.8);
         }
 
-        /* 专属提示样式 */
         .generate-tip {
             margin-top: 10px;
             margin-bottom: 15px;
@@ -276,7 +264,6 @@
             border: 1px solid #f3f4f6;
         }
 
-        /* 记录详情卡片美化 */
         .record-detail {
             margin-top: 20px;
             padding: 20px;
@@ -289,7 +276,6 @@
             width: 100%;
         }
 
-        /* 标题样式优化 */
         h2 {
             font-family: "PingFang SC", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
             color: #1E293B;
@@ -351,7 +337,6 @@
             background-color: #ffffff;
         }
 
-        /* 底部作者版权信息修改颜色为深灰蓝#0066CC */
         .footer {
             text-align: center;
             margin-top: 20px;
@@ -369,7 +354,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* 加载动效样式 */
         .loading {
             display: inline-block;
             width: 16px;
@@ -387,7 +371,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* 移动端适配 */
         @media (max-width: 768px) {
             .container {
                 padding: 20px 15px;
@@ -459,7 +442,6 @@
     </style>
 </head>
 <body>
-    <!-- 署名栏 -->
     <div class="author-header">
         <div class="author-name">衍楚 · IP追踪工具</div>
         <div class="author-desc">合法使用 · 切勿滥用</div>
@@ -470,7 +452,6 @@
         <p>⚠️ 仅用于合法场景，禁止恶意追踪他人隐私！</p>
         <p>📌 核心规则：专属Token+自定义跳转链接→生成专属链接→查询到IP后，Token自动销毁→未使用Token1小时后自动过期→重复且未使用的Token禁止生成</p>
 
-        <!-- 步骤1：输入Token -->
         <div class="input-area">
             <h3>步骤1：输入Token（自己牢记，用于生成/查询）</h3>
             <div class="token-input-group">
@@ -478,10 +459,9 @@
                 <button class="btn btn-secondary" onclick="copyToken()">复制Token</button>
             </div>
             <div class="hint-tip">💡 这是你的专属Token，需牢记用于后续查询IP记录 | 要求：①长度≥8位 ②包含至少1个大写字母+1个小写字母 ③无连续3个相同/有序字符 | <strong>Token越复杂（越乱），生成的链接效果越逼真，不易被察觉</strong> | 推荐点击「自动生成」获取乱序Token | <strong>Token未使用1小时后自动销毁 | 重复且未使用的Token禁止生成，需更换</strong></div>
-            
-            <!-- 专属提示容器：存放复制Token、自动生成Token的提示（按钮上方） -->
+
             <div class="generate-tip" id="generateTokenTip"></div>
-            
+
             <div class="btn-group" style="margin-bottom: 15px;">
                 <button class="btn btn-secondary" onclick="generateRandomToken()" id="generateBtn">自动生成乱序Token</button>
                 <button class="btn btn-secondary" onclick="clearInput()">清空输入</button>
@@ -494,7 +474,6 @@
             <div class="tip" id="tokenTip"></div>
         </div>
 
-        <!-- 步骤2：专属追踪链接展示 -->
         <div class="link-area hidden" id="linkArea">
             <h3>步骤2：你的专属追踪链接（一键复制后分享）</h3>
             <input type="text" id="trackLink" readonly />
@@ -504,7 +483,6 @@
             <div class="tip" id="copyTip"></div>
         </div>
 
-        <!-- 步骤3：查询IP记录 -->
         <div class="query-area">
             <h3>步骤3：输入Token查询对应IP（查询成功即销毁Token）</h3>
             <input type="text" class="input-box" id="queryToken" placeholder="输入你专属的Token" />
@@ -523,26 +501,22 @@
             </div>
         </div>
 
-        <!-- 底部版权信息（颜色修改） -->
         <div class="footer">
             版权所有 @ <span class="footer-author">衍楚</span> | 仅用于合法技术研究与学习
         </div>
     </div>
 
-    <!-- 背景音乐标签（隐藏，自动播放） -->
     <audio id="bgm" preload="auto" loop autoplay>
         <source src="/static/bgm.mp3" type="audio/mpeg">
         您的浏览器不支持音频播放，请升级浏览器！
     </audio>
 
     <script>
-        // ===== 前端核心配置常量（更换新域名，修改链接路径前缀为/s/）=====
-        const DOMAIN = "https://31401893.r32.cpolar.top"; // 新域名
-        const LINK_PATH_PREFIX = "/s/"; // 链接路径前缀
+        const DOMAIN = "https://31401893.r32.cpolar.top";
+        const LINK_PATH_PREFIX = "/s/";
         const TOKEN_LENGTH = 16;
-        const BASE_URL = DOMAIN + LINK_PATH_PREFIX; // 新链接前缀：https://31401893.r32.cpolar.top/s/
+        const BASE_URL = DOMAIN + LINK_PATH_PREFIX;
 
-        // ===== 缓存DOM元素（已包含generateTokenTip）=====
         const domElements = {
             customToken: document.getElementById("customToken"),
             tokenTip: document.getElementById("tokenTip"),
@@ -563,7 +537,6 @@
             queryBtn: document.getElementById("queryBtn")
         };
 
-        // ===== 防抖函数（优化流畅性：调整延迟为1200ms，更贴合用户操作）=====
         function debounce(fn, delay = 1200) {
             let timer = null;
             return function() {
@@ -575,7 +548,6 @@
             };
         }
 
-        // ===== 独立的Token验证函数（提前终止循环，减少无用计算）=====
         function validateToken(token) {
             if (!token) {
                 return { valid: false, message: "❌ 请输入Token后再生成！" };
@@ -596,7 +568,6 @@
             return { valid: true, message: "✅ Token格式验证通过！" };
         }
 
-        // ===== 输入框失焦实时校验（减少冗余定时器，提升流畅度）=====
         function validateTokenOnBlur() {
             const token = domElements.customToken.value.trim();
             if (!token) return;
@@ -615,7 +586,6 @@
             }
         }
 
-        // 辅助函数：校验连续重复字符（提前终止，减少计算量）
         function hasConsecutiveDuplicates(str) {
             for (let i = 0; i < str.length - 2; i++) {
                 if (str[i] === str[i+1] && str[i+1] === str[i+2]) {
@@ -628,7 +598,6 @@
             return false;
         }
 
-        // 辅助函数：校验连续有序字符（提前终止，减少计算量）
         function hasConsecutiveOrdered(str) {
             const charCodes = str.split("").map(c => c.charCodeAt(0));
             for (let i = 0; i < charCodes.length - 2; i++) {
@@ -645,7 +614,6 @@
             return false;
         }
 
-        // ===== 复制Token（减少DOM操作，提升流畅度）=====
         function copyToken() {
             const token = domElements.customToken.value.trim();
             if (!domElements.generateTokenTip.innerText) {
@@ -686,7 +654,6 @@
             }
         }
 
-        // ===== 清空输入（减少DOM操作，提升流畅度）=====
         function clearInput() {
             domElements.customToken.value = "";
             domElements.customRedirectUrl.value = "";
@@ -703,7 +670,6 @@
             domElements.recordArea.classList.add("hidden");
         }
 
-        // ===== 自动生成Token（减少DOM操作，提升请求流畅度）=====
         async function generateRandomToken() {
             domElements.generateBtn.disabled = true;
             domElements.generateBtn.innerHTML = '<span class="loading"></span>正在生成Token...';
@@ -746,7 +712,6 @@
             }
         }
 
-        // ===== 生成专属追踪链接（点击即转圈，无延迟，无冗余）=====
         async function generateTrackLinkCore() {
             const token = domElements.customToken.value.trim();
             const redirectUrl = document.getElementById("customRedirectUrl").value.trim();
@@ -797,10 +762,8 @@
             }
         }
 
-        // 封装防抖后的核心业务（延迟500ms，兼顾防重复和体验）
         const debouncedGenerateCore = debounce(generateTrackLinkCore, 500);
 
-        // 点击事件处理函数（点击即触发动效，无延迟）
         async function generateTrackLink() {
             domElements.createLinkBtn.disabled = true;
             domElements.createLinkBtn.innerHTML = '<span class="loading"></span>正在生成链接...';
@@ -814,7 +777,6 @@
             }
         }
 
-        // ===== 复制追踪链接（减少DOM操作，提升流畅度）=====
         function copyTrackLink() {
             const input = domElements.trackLink;
             domElements.copyTip.innerText = "";
@@ -844,7 +806,6 @@
             }
         }
 
-        // ===== 查询IP记录（点击即转圈，无延迟，无冗余）=====
         async function queryIpRecordCore() {
             const token = domElements.queryToken.value.trim();
             domElements.queryTip.innerText = "";
@@ -894,10 +855,8 @@
             }
         }
 
-        // 封装防抖后的核心业务（延迟500ms，兼顾防重复和体验）
         const debouncedQueryCore = debounce(queryIpRecordCore, 500);
 
-        // 点击事件处理函数（点击即触发动效，无延迟）
         async function queryIpRecord() {
             domElements.queryBtn.disabled = true;
             domElements.queryBtn.innerHTML = '<span class="loading"></span>正在查询...';
@@ -911,7 +870,6 @@
             }
         }
 
-        // ===== 自动播放音乐配置（减少阻塞，提升音频加载流畅度）=====
         document.addEventListener('DOMContentLoaded', function() {
             if (domElements.bgm) {
                 domElements.bgm.volume = 0.4;
