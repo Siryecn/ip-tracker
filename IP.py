@@ -138,7 +138,7 @@ def check_token_exists():
 
 @app.route("/")
 def index():
-    response = render_template("index.html")
+    response = render_template("index.html", domain=DOMAIN)
     return response
 
 @app.route("/register-token")
