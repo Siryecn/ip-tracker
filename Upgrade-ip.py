@@ -1,6 +1,8 @@
 from playwright.sync_api import sync_playwright
 import os
 import re
+import time
+import subprocess
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -61,17 +63,42 @@ def crawl_cpolar_domain():
             print("定位并点击「在线隧道列表」子选项...")
             online_tunnel = page.wait_for_selector('text="在线隧道列表"', timeout=10000)
             online_tunnel.click()
-            page.wait_for_timeout(1500)   
-            print("提取有效HTTPS公网域名...")
-            domain_element = page.wait_for_selector(
-                f'td .cell:has-text("{DOMAIN_PATTERN_PREFIX}")',
-                timeout=10000
+            page.wait_for_timeout(1500)
+            print("提取有效HTTPS公网域名（仅选取本地地址为localhost:5000的HTTPS隧道）...")
+            page.wait_for_selector("table", timeout=10000)
+            public_url = page.evaluate(
+                """() => {
+                    const text = el => (el.innerText || el.textContent || '').trim();
+                    const pick = (sel, fallback) => {
+                        const nodes = document.querySelectorAll(sel);
+                        return nodes.length ? Array.from(nodes) : Array.from(document.querySelectorAll(fallback));
+                    };
+                    const headers = pick('.el-table__header-wrapper thead th', 'table thead th').map(text);
+                    const colIndex = keywords => headers.findIndex(h => keywords.some(k => h.includes(k)));
+                    const pubIdx = colIndex(['公网地址', '公共地址', '公网']);
+                    const protoIdx = colIndex(['协议']);
+                    const localIdx = colIndex(['本地地址', '本地']);
+                    if (pubIdx < 0 || protoIdx < 0 || localIdx < 0) return '';
+                    const rows = pick('.el-table__body-wrapper tbody tr', 'table tbody tr');
+                    for (const row of rows) {
+                        const cells = Array.from(row.querySelectorAll('td')).map(text);
+                        const proto = (cells[protoIdx] || '').trim();
+                        const local = (cells[localIdx] || '').trim();
+                        const pub = cells[pubIdx] || '';
+                        const localOk = /:\\/\\/(localhost|127\\.0\\.0\\.1):5000$/.test(local)
+                            || /^(localhost|127\\.0\\.0\\.1):5000$/.test(local);
+                        const match = pub.match(/https:\\/\\/[^\\s]+/);
+                        if (/^https$/i.test(proto) && localOk && match) {
+                            return match[0];
+                        }
+                    }
+                    return '';
+                }"""
             )
-            public_url = domain_element.text_content().strip()        
             if not public_url or not public_url.startswith(DOMAIN_PATTERN_PREFIX):
-                raise Exception("提取到的域名为空或格式无效，无法继续更新")
-            print(f"公网域名提取成功：{public_url}")       
-            browser.close()     
+                raise Exception("未找到协议为HTTPS且本地地址为localhost:5000的隧道公网域名，无法继续更新")
+            print(f"公网域名提取成功：{public_url}")
+            browser.close()
             return public_url
     except Exception as e:
         raise Exception(f"域名爬取流程失败：{str(e)}")
@@ -104,6 +131,37 @@ def modify_env_file(target_file, new_domain):
     except Exception as e:
         raise Exception(f".env 文件更新失败：{str(e)}")
 
+def stop_existing_ip_service():
+    print("检测5000端口占用，关闭旧IP.py服务（含其CMD父窗口）...")
+    ps_script = (
+        "$ErrorActionPreference='SilentlyContinue';"
+        "$owningPids = Get-NetTCPConnection -LocalPort 5000 -State Listen | "
+        "Select-Object -ExpandProperty OwningProcess -Unique;"
+        "foreach ($procId in $owningPids) {"
+        "  $proc = Get-CimInstance Win32_Process -Filter \"ProcessId=$procId\";"
+        "  if ($proc -and $proc.Name -eq 'python.exe') {"
+        "    $parent = Get-CimInstance Win32_Process -Filter \"ProcessId=$($proc.ParentProcessId)\";"
+        "    if ($parent -and $parent.Name -eq 'cmd.exe') { taskkill /PID $proc.ParentProcessId /T /F | Out-Null }"
+        "    else { taskkill /PID $procId /T /F | Out-Null }"
+        "  }"
+        "}"
+    )
+    subprocess.run(
+        ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", ps_script],
+        capture_output=True, text=True, timeout=60
+    )
+    for _ in range(30):
+        result = subprocess.run(
+            ["powershell", "-NoProfile", "-Command",
+             "@(Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue).Count"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.stdout.strip() in ("0", ""):
+            print("旧服务已关闭，5000端口已释放")
+            return
+        time.sleep(1)
+    raise Exception("等待5000端口释放超时（30秒），旧服务可能未完全退出")
+
 def auto_open_cmd_and_run_ip_py():
     try:
         ip_py_full_path = os.path.abspath(TARGET_FILE_PATH)
@@ -131,6 +189,7 @@ def main():
         print(f"自动更新.env域名配置，无需手动干预...")
         modify_env_file(TARGET_FILE_PATH, new_cpolar_domain)
         print("\n" + "-" * 50)
+        stop_existing_ip_service()
         auto_open_cmd_and_run_ip_py()
         print("\n" + "=" * 60)
         print("所有流程全自动执行完成！")
